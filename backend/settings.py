@@ -20,22 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-<<<<<<< HEAD
 #SECRET_KEY = 'django-insecure-kcy!&px#pfa@@y-0(npv)*gbe97p$3ui)4g065^1yvfnc5*efz'
 
-import os
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'cg#p$g+j9tax!#a3cup@1$8obt2_+&k3q+pmu)5%asj6yjpkag')
-
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
-
-=======
 SECRET_KEY = 'django-insecure-kcy!&px#pfa@@y-0(npv)*gbe97p$3ui)4g065^1yvfnc5*efz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d
+
 
 CORS_ORIGIN_ALLOW_ALL = True # corsheaders
 ALLOWED_HOSTS = ['*']
@@ -57,10 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-<<<<<<< HEAD
     'whitenoise.middleware.WhiteNoiseMiddleware',
-=======
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -144,8 +133,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-<<<<<<< HEAD
-
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)#
@@ -157,5 +144,3 @@ DATABASES['default'].update(db_from_env)#
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-=======
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d

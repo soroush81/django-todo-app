@@ -1,7 +1,6 @@
 from django.db import models
 
 # Create your models here.
-<<<<<<< HEAD
 
 class Category(models.Model):
     _id = models.AutoField(primary_key=True)
@@ -22,13 +21,3 @@ class Todo(models.Model):
     def _str_(self):
         return self.title
 
-=======
-class Todo(models.Model):
-    _id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=120)
-    description = models.TextField()
-    completed = models.BooleanField(default=False)
-
-    def _str_(self):
-        return self.title
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d
