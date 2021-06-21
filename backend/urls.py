@@ -20,12 +20,12 @@ from todo import views
 
 router = routers.DefaultRouter()
 router.register(r'todos', views.TodoView, 'todo')
-<<<<<<< HEAD
 router.register(r'categories', views.CategoryView, 'category')
-=======
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d
+router.register(r'users', views.UserView, 'user')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('todo.urls')),
     path('api/', include(router.urls)),
 ]

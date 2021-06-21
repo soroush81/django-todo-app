@@ -9,15 +9,24 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+class User(models.Model):
+    _id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=60)
+    email = models.CharField(max_length=30)
+    password = models.CharField(max_length=30)
+
+    def _str_(self):
+        return self.name
+
 class Todo(models.Model):
     _id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=120)
-    category = models.ForeignKey(Category,default=5, on_delete=models.DO_NOTHING,blank=True, null=True)
+    category = models.ForeignKey(Category,default=5, on_delete=models.PROTECT,blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT,blank=True, null=True)
     description = models.TextField()
     completed = models.BooleanField(default=False)
 
-
-
     def _str_(self):
         return self.title
+
 

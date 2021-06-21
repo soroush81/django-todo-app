@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-<<<<<<< HEAD
          migrations.CreateModel(
             name='Category',
             fields=[
@@ -19,8 +18,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=30)),
             ],
         ),
-=======
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d
         migrations.CreateModel(
             name='Todo',
             fields=[
@@ -30,8 +27,4 @@ class Migration(migrations.Migration):
                 ('completed', models.BooleanField(default=False)),
             ],
         ),
-<<<<<<< HEAD
-        
-=======
->>>>>>> f5d6cdddc493c836af638f8719be5067ce326c1d
     ]
