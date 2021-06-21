@@ -1,22 +1,16 @@
+{% extends 'todo/base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{% static 'todo/styles/base.css' %}">
-    <title>TODO</title>
-</head>
-
-<body>
-    <h1>TODO APP!</h1>
-    {% if show_todo %} {% for todo_item in todo %}
-    <p>{{ todo_item.title }}</p>
-    {% endfor %} {% else %}
-    <h2>No todo list</h2>
-    {% endif %}
-</body>
-
-</html>
+{% block title%}TODOOO{% endblock %}
+{% block main_heading %}We got great todos for today!{% endblock %}
+{% block body %}
+        <section>
+            <h2>Upcoming Todos</h2>
+            <ul>
+                {% if show_todo %} {% for todo_item in todo %}
+                {% include 'todo/includes/todo-item.html' with id=todo_item.id title=todo_item.title %}
+                {% endfor %} {% else %}
+                <h2>No todo list</h2>
+                {% endif %} 
+            </ul>
+        </section>
+{% endblock %}
