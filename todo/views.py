@@ -5,27 +5,33 @@ from .serializers import TodoSerializer,CategorySerializer,UserSerializer
 from .models import Category, Todo, User
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-
-todo = [
-        {'id':'1','title':'carwash', 'description':'car washing', 'iscompleted': 'true'},
-        {'id':'2','title':'read book', 'description':'read a chapter of a book', 'iscompleted': 'false'}
-    ]
-
+from .forms import TodoForm
 def index(request):
-    
+    todo = Todo.objects.all()
     return render(request,'todo/index.html', {
-        'show_todo':True, 
         'todo': todo
     })
 
 def todo_details(request, todo_id):
-    #selected_todo=[x for x in todo if x.id == todo_id]
-    #selected_todo=[x for x in todo if x.id == todo_id]
-    selected_todo={'title':'carwash', 'description':'I need carwash', 'iscompleted': 'true'}
-    return render(request,'todo/todo_details.html',{
-        'todo_title': selected_todo['title'],
-        'todo_description': selected_todo['description']
-    })
+    try:
+        selected_todo=Todo.objects.get(id=todo_id)
+        if (request.method == 'GET'):
+            todo_form = TodoForm();
+        else:
+            todo_form = TodoForm(request.POST);
+            if (todo_form.is_valid()):
+                todo = todo_form.save()
+                #todo.category = 
+        return render(request,'todo/todo_details.html',{
+            'todo_found':True,
+            'todo': selected_todo,
+            'form':todo_form
+        })
+    except Exception as exc:
+        return render(request,'todo/todo_details.html',{
+            'todo_found':False
+        })
+
 
 # Create your views here.
 class CategoryView(viewsets.ModelViewSet):
@@ -40,12 +46,11 @@ class TodoView(viewsets.ModelViewSet):
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
     
-    def get(self, request, pk=None):
-        if pk:
-            todo = get_object_or_404(Todo.objects.all(), pk=pk)
-            serializer = TodoSerializer(todo)
-            return Response(serializer.data)
-        todos = Todo.objects.all()
-        serializer = TodoSerializer(todos, many=True)
-        return Response(serializer.data)
+    # def postTodo(self, request, format=None):
+    #     serializer = self.serializer_class(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(data=serializer.errors)
+
 

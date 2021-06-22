@@ -1,5 +1,19 @@
 {% block title%}<h1>TODO DETAILS - {{todo_title}}</h1>{% endblock %}
-{% block main_heading %}<h2>{{todo_title}}</h2>{% endblock %}
+{% block main_heading %}<h2>{{todo.title}}</h2>{% endblock %}
 {% block body %}
-<p>{{ todo_description }}</p>
+{% if todo_found %}
+<p>{{ todo.description }}</p>
+<p>{{ todo.category.name }}</p>
+<form action="{% url 'todo_details' todo.id  %}" method="POST">
+    {% csrf_token %}
+    <ul>
+        {{ form.as_ul }}
+    </ul>
+    <div>
+        <button>Submit</button>
+    </div>
+</form>
+{% else %}
+<p>No Todo Found for this id, Sorry</p>
+{% endif %}
 {% endblock %}

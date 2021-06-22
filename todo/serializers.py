@@ -4,30 +4,44 @@ from .models import Todo, Category, User
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    #_id = serializers.IntegerField(required=False)
+    #id = serializers.IntegerField(required=False)
     # category_name = serializers.RelatedField(source='category', read_only=True)
     class Meta:
         model = Category
-        fields = ('_id', 'name')
+        fields = ('id', 'name')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('_id', 'name','email','password')
+        fields = ('id', 'name','email','password')
         
 class TodoSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     user = UserSerializer();
     class Meta:
         model = Todo
-        fields = ('_id', 'title','category', 'description', 'completed')
+        fields = ('id', 'title','category', 'description', 'completed','user')
+
+        
     def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.description = validated_data.get('description', instance.description)
-        instance.completed = validated_data.get('completed', instance.completed)
-#        instance.category._id = validated_data.get('category').get('_id')
-#        instance.category.name = validated_data.get('category').get('name')
-        #instance.category = validated_data.get('category')
-        instance.save()
-        return instance
+        if validated_data.get('category'):
+            category_data = validated_data.get('category')
+            category_serializer = CategorySerializer(data=category_data)
+
+            if category_serializer.is_valid():
+                category = category_serializer.update(instance=instance.category,
+                                                    validated_data=category_serializer.validated_data)
+                validated_data['category'] = category
+
+        return super().update(instance, validated_data)
+    
+#     def update(self, instance, validated_data):
+#         instance.title = validated_data.get('title', instance.title)
+#         instance.description = validated_data.get('description', instance.description)
+#         instance.completed = validated_data.get('completed', instance.completed)
+# #        instance.category.id = validated_data.get('category').get('id')
+# #        instance.category.name = validated_data.get('category').get('name')
+#         #instance.category = validated_data.get('category')
+#         instance.save()
+#         return instance
 

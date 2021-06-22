@@ -6,11 +6,9 @@
         <section>
             <h2>Upcoming Todos</h2>
             <ul>
-                {% if show_todo %} {% for todo_item in todo %}
+                {% for todo_item in todo %}
                 {% include 'todo/includes/todo-item.html' with id=todo_item.id title=todo_item.title %}
-                {% endfor %} {% else %}
-                <h2>No todo list</h2>
-                {% endif %} 
+                {% endfor %}
             </ul>
         </section>
 {% endblock %}
