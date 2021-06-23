@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Todo,Category,User
+from .models import Todo,Category
 
 class TodoAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'completed')
@@ -13,8 +13,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','name','email','password',)
+# class UserAdmin(admin.ModelAdmin):
+#     list_display = ('id','name','username','password',)
 
-admin.site.register(User, UserAdmin)
+# admin.site.register(User, UserAdmin)
 

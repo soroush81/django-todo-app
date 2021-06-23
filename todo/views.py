@@ -5,6 +5,11 @@ from .serializers import TodoSerializer,CategorySerializer,UserSerializer
 from .models import Category, Todo, User
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.status import HTTP_401_UNAUTHORIZED
+from rest_framework.authtoken.models import Token
 from .forms import TodoForm
 def index(request):
     todo = Todo.objects.all()
@@ -21,7 +26,6 @@ def todo_details(request, todo_id):
             todo_form = TodoForm(request.POST);
             if (todo_form.is_valid()):
                 todo = todo_form.save()
-                #todo.category = 
         return render(request,'todo/todo_details.html',{
             'todo_found':True,
             'todo': selected_todo,
@@ -38,19 +42,24 @@ class CategoryView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
-class UserView(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+# class UserView(viewsets.ModelViewSet):
+#     serializer_class = UserSerializer
+#     queryset = User.objects.all()
 
 class TodoView(viewsets.ModelViewSet):
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
-    
-    # def postTodo(self, request, format=None):
-    #     serializer = self.serializer_class(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(data=serializer.errors)
+
+@api_view(["POST"])
+def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response({"error": "Login failed"}, status=HTTP_401_UNAUTHORIZED)
+
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({"token": token.key})
 
 
