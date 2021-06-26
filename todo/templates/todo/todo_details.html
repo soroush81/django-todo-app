@@ -5,7 +5,7 @@
 <p>{{ todo.description }}</p>
 <p>{{ todo.category.name }}</p>
 <form action="{% url 'todo_details' todo.id  %}" method="POST">
-    {% csrf_token %}
+    <!-- {% csrf_token %} -->
     <ul>
         {{ form.as_ul }}
     </ul>
