@@ -14,8 +14,7 @@ from .forms import TodoForm
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.utils import jwt_payload_handler
 from django.contrib.auth.signals import user_logged_in
-
-
+#from jwt.contrib.algorithms.pycrypto import RSAAlgorithm
 import json,jwt
 
 def index(request):
@@ -49,9 +48,12 @@ class CategoryView(viewsets.ModelViewSet):
     permission_classes =[
         permissions.IsAuthenticated
     ]
+    print('ttttttttttttttt')
+    print(jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InNvb2RlaCIsImV4cCI6MTYyNDczMjI3MCwiZW1haWwiOiJzZWJyYWhpbWk2MEB5YWhvby5jb20ifQ.66Z97EteThqvHwSKWC4ROkoe3MhBd4hGxwINVNVrN24', 'SECRET_KEY', algorithm='HS256'))
     serializer_class = CategorySerializer
+    print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnn')
     queryset = Category.objects.all()
-
+    print('ooooooooooooooo')
 class TodoView(viewsets.ModelViewSet):
     authentication_classes = [JSONWebTokenAuthentication]
     permission_classes =[
@@ -90,11 +92,12 @@ def login(request):
     if user:
         try:
             payload = jwt_payload_handler(user)
-            token = jwt.encode(payload, "SECRET_KEY")
+            #jwt.register_algorithm('RS256', RSAAlgorithm(RSAAlgorithm.SHA256))
+            token = jwt.encode(payload, "SECRET_KEY", algorithm='HS256')
             user_details = {}
             user_details['name'] = "%s %s" % (
                 user.first_name, user.last_name)
-            user_details['token'] = token
+            user_details['token'] = token#.decode('utf-8')
             user_logged_in.send(sender=user.__class__,
                                     request=request, user=user)
             return Response(user_details, status=status.HTTP_200_OK)

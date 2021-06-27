@@ -60,19 +60,25 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        ),
      'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     )
 }
 
 import datetime
+
 JWT_AUTH = {
-    'JWT_VERIFY': True,
+    'DEFAULT_JWT_ENCODE_HANDLER':'rest_framework_jwt.utils.jwt_encode_handler',
+    'DEFAULT_JWT_DECODE_HANDLER':'rest_framework_jwt.utils.jwt_decode_handler',
+    'DEFAULT_JWT_PAYLOAD_HANDLER':'rest_framework_jwt.utils.jwt_payload_handler',
+    'JWT_SECRET_KEY': SECRET_KEY,
     'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 0,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    #'JWT_AUTH_HEADER_PREFIX': 'Bearer',
  
 }
 
