@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Todo, Category, User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,8 +44,7 @@ class TodoSerializer(serializers.ModelSerializer):
         category_name = list(category_data.items())[0][1]
 
         user_data = validated_data.pop('user')
-        user_name = list(user_data.items())[0][1]
-
+        user_name = list(user_data.items())[2][1]
         id = validated_data.get(
             'id', instance.id)
         title = validated_data.get(
@@ -54,7 +55,7 @@ class TodoSerializer(serializers.ModelSerializer):
             'completed', instance.completed)
 
         category=Category.objects.get(name=category_name)
-        user = User.objects.get(name=user_name)
+        user = User.objects.get(username=user_name)
 
 
         instance=Todo(category=category,id=id,title=title,description=description,completed=completed,user=user)
@@ -62,6 +63,20 @@ class TodoSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['name'] = user.first_name + ' ' + user.last_name
+        token['username'] = user.username
+        # ...
+
+        return token
+
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
 

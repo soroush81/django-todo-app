@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import serializers, viewsets, permissions
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import RegistrationSerializer, TodoSerializer,CategorySerializer
+from .serializers import RegistrationSerializer, TodoSerializer,CategorySerializer,MyTokenObtainPairSerializer
 from .models import Category, Todo, User
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
@@ -11,51 +11,23 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 from rest_framework.authtoken.models import Token
 from .forms import TodoForm
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_jwt.utils import jwt_payload_handler
 from django.contrib.auth.signals import user_logged_in
-#from jwt.contrib.algorithms.pycrypto import RSAAlgorithm
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 import json,jwt
 
-def index(request):
-    todo = Todo.objects.all()
-    return render(request,'todo/index.html', {
-        'todo': todo
-    })
-
-def todo_details(request, todo_id):
-    try:
-        selected_todo=Todo.objects.get(id=todo_id)
-        if (request.method == 'GET'):
-            todo_form = TodoForm();
-        else:
-            todo_form = TodoForm(request.POST);
-            if (todo_form.is_valid()):
-                todo = todo_form.save()
-        return render(request,'todo/todo_details.html',{
-            'todo_found':True,
-            'todo': selected_todo,
-            'form':todo_form
-        })
-    except Exception as exc:
-        return render(request,'todo/todo_details.html',{
-            'todo_found':False
-        })
-
-
 class CategoryView(viewsets.ModelViewSet):
-    authentication_classes = [JSONWebTokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes =[
         permissions.IsAuthenticated
     ]
-    print('ttttttttttttttt')
-    print(jwt.decode('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InNvb2RlaCIsImV4cCI6MTYyNDczMjI3MCwiZW1haWwiOiJzZWJyYWhpbWk2MEB5YWhvby5jb20ifQ.66Z97EteThqvHwSKWC4ROkoe3MhBd4hGxwINVNVrN24', 'SECRET_KEY', algorithm='HS256'))
     serializer_class = CategorySerializer
-    print('nnnnnnnnnnnnnnnnnnnnnnnnnnnnn')
     queryset = Category.objects.all()
-    print('ooooooooooooooo')
+
 class TodoView(viewsets.ModelViewSet):
-    authentication_classes = [JSONWebTokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes =[
         permissions.IsAuthenticated
     ]
@@ -63,18 +35,9 @@ class TodoView(viewsets.ModelViewSet):
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
 
-# @api_view(["POST"])
-# def login(request):
-#     username = request.data.get("username")
-#     password = request.data.get("password")
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
-#     user = authenticate(username=username, password=password)
-#     if not user:
-#         return Response({"error": "Login failed"}, status=HTTP_401_UNAUTHORIZED)
-    
-    
-#     token, _ = Token.objects.get_or_create(user=user)
-#     return Response({"token": token.key})
 
 @api_view(["POST"])
 @permission_classes([AllowAny, ])
@@ -84,7 +47,6 @@ def login(request):
     username = request.data.get("username")
     password = request.data.get("password")
     try:
-        #user = User.objects.get(username="soodeh")
         user = authenticate(username=username, password=password)
     except User.DoesNotExist:
         return Response({'Error': "Invalid username/password"}, status="400")
@@ -92,7 +54,6 @@ def login(request):
     if user:
         try:
             payload = jwt_payload_handler(user)
-            #jwt.register_algorithm('RS256', RSAAlgorithm(RSAAlgorithm.SHA256))
             token = jwt.encode(payload, "SECRET_KEY", algorithm='HS256')
             user_details = {}
             user_details['name'] = "%s %s" % (
@@ -110,42 +71,6 @@ def login(request):
               status=400,
               content_type="application/json"
             )    
-
-
-
-# class Login(APIView):
-
-#     def post(self, request, *args, **kwargs):
-#         if not request.data:
-#             return Response({'Error': "Please provide username/password"}, status="400")
-        
-#         username = request.data['username']
-#         password = request.data['password']
-#         try:
-#             #user = User.objects.get(username=username, password=password)
-#             user = authenticate(username=username, password=password)
-#         except User.DoesNotExist:
-#             return Response({'Error': "Invalid username/password"}, status="400")
-#         if user:
-            
-#             payload = {
-#                 'id': user.id,
-#                 'email': user.email,
-#             }
-#             jwt_token = {'token': jwt.encode(payload, "SECRET_KEY")}
-
-#             return HttpResponse(
-#               json.dumps(jwt_token),
-#               status=200,
-#               content_type="application/json"
-#             )
-#         else:
-#             return Response(
-#               json.dumps({'Error': "Invalid credentials"}),
-#               status=400,
-#               content_type="application/json"
-#             )
-
 @api_view(["POST"])
 def register(request):
 
@@ -172,5 +97,4 @@ def register(request):
     #login(request, user)
     token, _ = Token.objects.get_or_create(user=user)
     return Response({"token": token.key})
-
 
