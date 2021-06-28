@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Todo, Category, User
+from .models import Todo, Category
+from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -33,7 +34,6 @@ class TodoSerializer(serializers.ModelSerializer):
         
         category=Category.objects.get(name=category_name)
         user = User.objects.get(username=user_name)
-
         instance=Todo(category=category,id=id,title=title,description=description,completed=completed,user=user)
 
         instance.save()
@@ -56,7 +56,7 @@ class TodoSerializer(serializers.ModelSerializer):
 
         category=Category.objects.get(name=category_name)
         user = User.objects.get(username=user_name)
-
+        print(user)
 
         instance=Todo(category=category,id=id,title=title,description=description,completed=completed,user=user)
 

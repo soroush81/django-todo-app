@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework import serializers, viewsets, permissions
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import RegistrationSerializer, TodoSerializer,CategorySerializer,MyTokenObtainPairSerializer
-from .models import Category, Todo, User
+from .serializers import RegistrationSerializer, TodoSerializer,CategorySerializer, UserSerializer,MyTokenObtainPairSerializer
+from .models import Category, Todo
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
@@ -25,6 +26,14 @@ class CategoryView(viewsets.ModelViewSet):
     ]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+
+class UserView(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes =[
+        permissions.IsAuthenticated
+    ]
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
 
 class TodoView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
