@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
+from datetime import datetime    
 
 # Create your models here.
 
@@ -21,6 +22,7 @@ class Todo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True, null=True)
     description = models.TextField()
     completed = models.BooleanField(default=False)
+    overdueDate = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
         return self.title
