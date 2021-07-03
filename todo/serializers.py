@@ -17,11 +17,14 @@ class UserSerializer(serializers.ModelSerializer):
 class TodoSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     user = UserSerializer();
+    
+    print('aaaaaaaaaaaaaaaa')
     class Meta:
         model = Todo
         fields = ('id', 'title','category', 'description', 'completed','user', 'overdueDate')
     
     def create(self, validated_data):
+        print('bbbbbbbbbbbbbbbbb')
         category_data = validated_data.pop('category')
         category_name = list(category_data.items())[0][1]
 
@@ -40,15 +43,16 @@ class TodoSerializer(serializers.ModelSerializer):
         return instance
         
     def update(self, instance, validated_data):
+        print('ccccccccccccccccccccccccc')
         category_data = validated_data.pop('category')
         category_name = list(category_data.items())[0][1]
 
         user_data = validated_data.pop('user')
         user_name = self.context.get('request').user
-        owner = User.objects.get_or_create(username=user_name)[0]
+        owner = User.objects.get(username=user_name)#[0]
         
         #user_name = list(user_data.items())[2][1]
-        print(user_name)
+        print(owner)
         id = validated_data.get('id', instance.id)
         title = validated_data.get('title', instance.title)
         description = validated_data.get('description', instance.description)
@@ -56,8 +60,8 @@ class TodoSerializer(serializers.ModelSerializer):
         overdueDate = validated_data.get('overdueDate', instance.overdueDate)
 
         category=Category.objects.get(name=category_name)
-        instance=Todo(category=category,id=id,title=title,description=description,completed=completed, user=owner,overdueDate=overdueDate)
-        print('soodeh')
+        instance=Todo(category=category,user=owner,id=id,title=title,description=description,completed=completed, overdueDate=overdueDate)
+        print('soodehhhhhhhhhhhh')
         print(instance)
         instance.save()
 
