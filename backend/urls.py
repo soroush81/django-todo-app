@@ -17,16 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from todo import views
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
+
 
 router = routers.DefaultRouter()
-router.register(r'todos', views.TodoView, 'todo')
+# router.register(r'todos', views.TodoView, 'todo')
 router.register(r'categories', views.CategoryView, 'category')
-router.register(r'users', views.UserView, 'user')
+# router.register(r'users', views.UserView, 'user')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

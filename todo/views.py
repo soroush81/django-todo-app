@@ -16,6 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_jwt.utils import jwt_payload_handler
 from django.contrib.auth.signals import user_logged_in
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.views import APIView
 
 import json,jwt
 
@@ -40,12 +41,79 @@ class TodoView(viewsets.ModelViewSet):
     permission_classes =[
         permissions.IsAuthenticated
     ]
-    
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
+    
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+class TodoList(APIView):
+ 
+    def get(self, request):
+        todos = Todo.objects.all()
+        serializer = TodoSerializer(todos, many=True)
+        return Response(serializer.data)
+ 
+    def post(self, request):
+        serializer = TodoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+ 
+ 
+ 
+class TodoDetails(APIView):
+    print('aaaaaaaaa')
+    def get_object(self, id):
+        try:
+            print(id)
+            return Todo.objects.get(id=id)
+        except Todo.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+ 
+ 
+    def get(self, request, id):
+        print('hhhhhhhh')
+        todo = self.get_object(id)
+        print(todo)
+        serializer = TodoSerializer(todo)
+        return Response(serializer.data)
+ 
+    def post(self, request):
+        serializer = TodoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+ 
+ 
+    def put(self, request,id):
+        print('wwwwwwwwwwwww')
+
+        todo = self.get_object(id)
+        print(todo)
+        serializer = TodoSerializer(todo, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
+ 
+    def delete(self, request, id):
+        todo = self.get_object(id)
+        todo.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
 
 @api_view(["POST"])

@@ -9,7 +9,9 @@ class TodoViewSet(viewsets.ModelViewSet):
     serializer_class = TodoSerializer
 
     def get_queryset(self):
+        print('fffff')
         return self.request.user.todos.all()
 
     def perform_create(self,serializer):
+        print('pppppppppppppppppppp')
         serializer.save(user=self.request.user)

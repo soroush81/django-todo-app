@@ -13,23 +13,81 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+# class TodoSerializer(serializers.Serializer):
+#     id = serializers.IntegerField()
+#     title = serializers.CharField(max_length=120)
+#     description = serializers.CharField()
+#     completed = serializers.BooleanField(default=False)
+#     overdueDate = serializers.DateTimeField()
+#     category = CategorySerializer()
+#     user = UserSerializer()
+
+#     def create(self, validated_data):
+#         category_data = validated_data.pop('category')
+#         category_name = list(category_data.items())[0][1]
+
+#         user_name = self.context.get('request').user
+#         id = validated_data.get('id')
+#         title = validated_data.get('title')
+#         description = validated_data.get('description')
+#         completed = validated_data.get('completed')
+#         overdueDate = validated_data.get('overdueDate')
         
-class TodoSerializer(serializers.ModelSerializer):
+#         category=Category.objects.get(name=category_name)
+#         user = User.objects.get(username=user_name)
+       
+#         instance=Todo(category=category,id=id,title=title,description=description,completed=completed,user=user, overdueDate=overdueDate)
+#         instance.save()
+#         return instance
+        
+#     def update(self, instance, validated_data):
+#         print('ttttttttttttttt')
+#         category_data = validated_data.pop('category')
+#         category_name = list(category_data.items())[0][1]
+
+#         # user_data = validated_data.pop('user')
+#         # user_name = self.context.get('request').user
+#         # owner = User.objects.get(username=user_name)#[0]
+        
+#         instance.title = validated_data.get('title', instance.title)
+#         instance.description = validated_data.get('description', instance.description)
+#         instance.completed = validated_data.get('completed', instance.completed)
+#         instance.overdueDate = validated_data.get('overdueDate', instance.overdueDate)
+#         instance.category=Category.objects.get(name=category_name)
+#         print(instance)
+#         instance.save()
+
+#         return instance
+
+
+
+class TodoSerializer(serializers.Serializer):
+    id=serializers.JSONField()
+    title = serializers.CharField(max_length=120)
+    description = serializers.CharField()
+    completed = serializers.BooleanField(default=False)
+    overdueDate = serializers.DateTimeField()
     category = CategorySerializer()
     user = UserSerializer();
-    
-    print('aaaaaaaaaaaaaaaa')
-    class Meta:
-        model = Todo
-        fields = ('id', 'title','category', 'description', 'completed','user', 'overdueDate')
+
+    # class Meta:
+    #     model = Todo
+    #     fields = ('id', 'title','category', 'description', 'completed','user', 'overdueDate')
     
     def create(self, validated_data):
         print('bbbbbbbbbbbbbbbbb')
+
         category_data = validated_data.pop('category')
         category_name = list(category_data.items())[0][1]
 
-        user_name = self.context.get('request').user
-        id = validated_data.get('id')
+        #user_name = self.context.get('request')
+        user_data = validated_data.pop('user')
+        user_name = list(user_data.items())[2][1]
+
+        print(user_name)
+        #id = 250#validated_data.get('id')
+        print(id)
         title = validated_data.get('title')
         description = validated_data.get('description')
         completed = validated_data.get('completed')
@@ -37,31 +95,23 @@ class TodoSerializer(serializers.ModelSerializer):
         
         category=Category.objects.get(name=category_name)
         user = User.objects.get(username=user_name)
-        instance=Todo(category=category,id=id,title=title,description=description,completed=completed,user=user, overdueDate=overdueDate)
-        print('soooooooooooooodeh')
+       
+        instance=Todo(category=category,title=title,description=description,completed=completed,user=user, overdueDate=overdueDate)
         instance.save()
         return instance
         
     def update(self, instance, validated_data):
-        print('ccccccccccccccccccccccccc')
         category_data = validated_data.pop('category')
         category_name = list(category_data.items())[0][1]
 
         user_data = validated_data.pop('user')
-        user_name = self.context.get('request').user
-        owner = User.objects.get(username=user_name)#[0]
-        
-        #user_name = list(user_data.items())[2][1]
-        print(owner)
-        id = validated_data.get('id', instance.id)
-        title = validated_data.get('title', instance.title)
-        description = validated_data.get('description', instance.description)
-        completed = validated_data.get('completed', instance.completed)
-        overdueDate = validated_data.get('overdueDate', instance.overdueDate)
-
-        category=Category.objects.get(name=category_name)
-        instance=Todo(category=category,user=owner,id=id,title=title,description=description,completed=completed, overdueDate=overdueDate)
-        print('soodehhhhhhhhhhhh')
+        #print(user_data)
+        instance.id = validated_data.get('id', instance.id)
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.completed = validated_data.get('completed', instance.completed)
+        instance.overdueDate = validated_data.get('overdueDate', instance.overdueDate)
+        instance.category=Category.objects.get(name=category_name)
         print(instance)
         instance.save()
 
