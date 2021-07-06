@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Todo, Category
 from django.contrib.auth.models import User
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -13,86 +14,35 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+        extra_kwargs = {
+            'username': {
+                'validators': [UnicodeUsernameValidator()],
+            }
+        }
 
-# class TodoSerializer(serializers.Serializer):
-#     id = serializers.IntegerField()
-#     title = serializers.CharField(max_length=120)
-#     description = serializers.CharField()
-#     completed = serializers.BooleanField(default=False)
-#     overdueDate = serializers.DateTimeField()
-#     category = CategorySerializer()
-#     user = UserSerializer()
-
-#     def create(self, validated_data):
-#         category_data = validated_data.pop('category')
-#         category_name = list(category_data.items())[0][1]
-
-#         user_name = self.context.get('request').user
-#         id = validated_data.get('id')
-#         title = validated_data.get('title')
-#         description = validated_data.get('description')
-#         completed = validated_data.get('completed')
-#         overdueDate = validated_data.get('overdueDate')
-        
-#         category=Category.objects.get(name=category_name)
-#         user = User.objects.get(username=user_name)
-       
-#         instance=Todo(category=category,id=id,title=title,description=description,completed=completed,user=user, overdueDate=overdueDate)
-#         instance.save()
-#         return instance
-        
-#     def update(self, instance, validated_data):
-#         print('ttttttttttttttt')
-#         category_data = validated_data.pop('category')
-#         category_name = list(category_data.items())[0][1]
-
-#         # user_data = validated_data.pop('user')
-#         # user_name = self.context.get('request').user
-#         # owner = User.objects.get(username=user_name)#[0]
-        
-#         instance.title = validated_data.get('title', instance.title)
-#         instance.description = validated_data.get('description', instance.description)
-#         instance.completed = validated_data.get('completed', instance.completed)
-#         instance.overdueDate = validated_data.get('overdueDate', instance.overdueDate)
-#         instance.category=Category.objects.get(name=category_name)
-#         print(instance)
-#         instance.save()
-
-#         return instance
-
-
-
-class TodoSerializer(serializers.Serializer):
-    id=serializers.JSONField()
-    title = serializers.CharField(max_length=120)
-    description = serializers.CharField()
-    completed = serializers.BooleanField(default=False)
-    overdueDate = serializers.DateTimeField()
+class TodoSerializer(serializers.ModelSerializer):
+    # id=serializers.JSONField()
+    # title = serializers.CharField(max_length=120)
+    # description = serializers.CharField()
+    # completed = serializers.BooleanField(default=False)
+    # overdueDate = serializers.DateField()
     category = CategorySerializer()
     user = UserSerializer();
 
-    # class Meta:
-    #     model = Todo
-    #     fields = ('id', 'title','category', 'description', 'completed','user', 'overdueDate')
-    
-    def create(self, validated_data):
-        print('bbbbbbbbbbbbbbbbb')
+    class Meta:
+        model = Todo
+        fields = '__all__'
 
+    def create(self, validated_data):
         category_data = validated_data.pop('category')
         category_name = list(category_data.items())[0][1]
 
-        #user_name = self.context.get('request')
         user_data = validated_data.pop('user')
-        user_name = list(user_data.items())[2][1]
-
-        print(user_name)
-        #id = 250#validated_data.get('id')
-        print(id)
+        user_name = list(user_data.items())[1][1]
         title = validated_data.get('title')
         description = validated_data.get('description')
         completed = validated_data.get('completed')
         overdueDate = validated_data.get('overdueDate')
-        
         category=Category.objects.get(name=category_name)
         user = User.objects.get(username=user_name)
        
@@ -104,8 +54,6 @@ class TodoSerializer(serializers.Serializer):
         category_data = validated_data.pop('category')
         category_name = list(category_data.items())[0][1]
 
-        user_data = validated_data.pop('user')
-        #print(user_data)
         instance.id = validated_data.get('id', instance.id)
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
@@ -122,10 +70,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # Add custom claims
         token['name'] = user.first_name + ' ' + user.last_name
         token['username'] = user.username
-        # ...
+        token['password'] = user.password
 
         return token
 
@@ -133,7 +80,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class RegistrationSerializer(serializers.ModelSerializer):
 
-    #password2 = serializers.CharField(style={'input_type':'password'},write_only=True)
     class Meta:
         model = User
         fields = ('first_name','last_name','email','username','password')
