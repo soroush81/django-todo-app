@@ -78,27 +78,39 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+# class RegistrationSerializer(serializers.ModelSerializer):
 
+#     class Meta:
+#         model = User
+#         fields = ('first_name','last_name','email','username','password')
+#         extra_kwargs = {
+#             'password':{'write_only': True}
+#         }
+
+#     def save(self):
+#         print('registering')
+#         user = User(
+#             first_name = self.validated_data['first_name'],
+#             last_name = self.validated_data['last_name'],
+#             email = self.validated_data['email'],
+#             username = self.validated_data['username'],
+#         )
+#         password = self.validated_data['password']
+#         #password2 = self.validated_data['password2']
+
+#         # if (password != password2):
+#         #     raise serializers.ValidationError({'password': 'password must match'})
+#         user.set_password(password)
+#         user.save()
+#         return user
+
+class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name','last_name','email','username','password')
+        fields = ('id','username','password','first_name', 'last_name')
         extra_kwargs = {
-            'password':{'write_only': True}
+            'password':{'write_only': True},
         }
-
-    def save(self):
-        user = User(
-            first_name = self.validated_data['first_name'],
-            last_name = self.validated_data['last_name'],
-            email = self.validated_data['email'],
-            username = self.validated_data['username'],
-        )
-        password = self.validated_data['password']
-        #password2 = self.validated_data['password2']
-
-        # if (password != password2):
-        #     raise serializers.ValidationError({'password': 'password must match'})
-        user.set_password(password)
-        user.save()
+    def create(self, validated_data):
+        user = User.objects.create_user(validated_data['username'],     password = validated_data['password']  ,first_name=validated_data['first_name'],  last_name=validated_data['last_name'])
         return user

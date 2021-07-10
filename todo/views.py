@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import  viewsets, permissions
-from rest_framework.permissions import IsAuthenticated
-from .serializers import RegistrationSerializer, TodoSerializer,CategorySerializer, UserSerializer,MyTokenObtainPairSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from .serializers import RegisterSerializer, TodoSerializer,CategorySerializer, UserSerializer,MyTokenObtainPairSerializer
 from .models import Category, Todo
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -60,30 +60,33 @@ class LogoutView(APIView):
 
 
 
-@api_view(["POST"])
-def register(request):
+# @api_view(["POST"])
+# @permission_classes([AllowAny])
+# def register(request):
 
-    if request.method == 'POST':
-        serializers = RegistrationSerializer(data=request.data)
-        data={}
-        if (serializers.is_valid()):
-            user = serializers.save()
-            data['response'] = 'successfully registered!'
-            data['first_name'] = user.first_name
-            data['username'] = user.username
-            token = Token.objects.get(user=user).key
-            data['token'] = token
-        # else:
-        #     data= serializers.error
-        return Response(data)
+#     if request.method == 'POST':
+#         print('registering')
+#         serializers = RegistrationSerializer(data=request.data)
+#         data={}
+#         if (serializers.is_valid()):
+#             user = serializers.save()
+#             data['response'] = 'successfully registered!'
+#             data['first_name'] = user.first_name
+#             data['username'] = user.username
+#             token = Token.objects.get(user=user).key
+#             data['token'] = token
+#         else:
+#             print(serializers)
+#             # data= serializers
+#         return Response(data)
 
 
-    id = request.data.get("id")
-    first_name = request.data.get("first_name")
-    username = request.data.get("username")
-    password = request.data.get("password")
-    user = User(first_name,username,password)
-    #login(request, user)
-    token, _ = Token.objects.get_or_create(user=user)
-    return Response({"token": token.key})
+#     id = request.data.get("id")
+#     first_name = request.data.get("first_name")
+#     username = request.data.get("username")
+#     password = request.data.get("password")
+#     user = User(first_name,username,password)
+#     #login(request, user)
+#     token, _ = Token.objects.get_or_create(user=user)
+#     return Response({"token": token.key})
 
