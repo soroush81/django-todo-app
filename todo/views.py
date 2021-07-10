@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.http import HttpResponse
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework import status
 
 class CategoryView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -40,13 +42,22 @@ class TodoView(viewsets.ModelViewSet):
         return self.partial_update(request, *args, **kwargs)
 
 
-# @api_view(["GET"])
-# def isTodayTodo(request):
-#     todos = Todo.is_today_todo()
-#     return Response(todos)
-
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            print('sooooooooodeh logged out')
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 @api_view(["POST"])
@@ -57,7 +68,7 @@ def register(request):
         data={}
         if (serializers.is_valid()):
             user = serializers.save()
-            data['response'] = 'successfult registered!'
+            data['response'] = 'successfully registered!'
             data['first_name'] = user.first_name
             data['username'] = user.username
             token = Token.objects.get(user=user).key
