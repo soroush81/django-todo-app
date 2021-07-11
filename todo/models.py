@@ -13,7 +13,6 @@ class Category(models.Model):
         return self.name
     
 class Todo(models.Model):
-    #id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=120)
     category = models.ForeignKey(Category,default=5, on_delete=models.PROTECT,blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,blank=True, null=True,unique=False)
