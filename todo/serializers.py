@@ -21,11 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 class TodoSerializer(serializers.ModelSerializer):
-    # id=serializers.JSONField()
-    # title = serializers.CharField(max_length=120)
-    # description = serializers.CharField()
-    # completed = serializers.BooleanField(default=False)
-    # overdueDate = serializers.DateField()
     category = CategorySerializer()
     user = UserSerializer();
 
