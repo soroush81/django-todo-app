@@ -33,7 +33,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
 CORS_ORIGIN_ALLOW_ALL = True # corsheaders
-ALLOWED_HOSTS = ['https://sebrahimi-todoapp-server.herokuapp.com/','127.0.0.1']
+ALLOWED_HOSTS = ['sebrahimi-todoapp-server.herokuapp.com','127.0.0.1']
 
 # Application definition
 
