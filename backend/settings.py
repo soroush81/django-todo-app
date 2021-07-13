@@ -26,7 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-kcy!&px#pfa@@y-0(npv)*gbe97p$3ui)4g065^1yvfnc5*efz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+import os
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+
 
 
 CORS_ORIGIN_ALLOW_ALL = True # corsheaders
